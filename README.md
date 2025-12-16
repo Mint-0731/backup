@@ -1,3 +1,5 @@
+* 구드 닫혔을 때 대비용으로 파 둔 5.6.10 백업본.
+
 # Degrees of Lewdity
 
 ## Lexicon of Lewdity
