@@ -1,0 +1,85 @@
+:: Widgets presets [widget]
+<<widget "randomiseSettings">>
+	<<set _page to _args[1]>>
+	<<run randomiseSettings(_args[0])>>
+	<<if StartConfig.enableImages and $passage is "Start" and _page is "characterSettings">>
+		<<startingPlayerImageUpdate>>
+		<<removeclass #startingPlayerImage "hidden">>
+	<</if>>
+	<<displaySettings _page>>
+<</widget>>
+
+<<widget "importConfirmDetails">>
+	<<if isJsonString($importString)>>
+		<div style="padding:5px 0px 0px 10px">
+			<span class="green">Change the below settings?</span><br>
+			<div class="presetButtons">
+				<<button "Yes">><<run importSettings($importString, "function")>><<displaySettings "exportsettings">><<if StartConfig.enableImages is true and $passage is "Start">><<startingPlayerImageUpdate>><<startingPlayerImageUpdate>><</if>><</button>>
+				<<button "No">><<displaySettings "exportsettings">><<unset $importString>><</button>>
+			</div>
+		</div>
+		<<importDetailsDisplay `JSON.parse($importString)`>>
+	<<else>>
+		<<link "Back">><<displaySettings "exportsettings">><</link>>
+		<br><br>
+		<span class="red">Settings import is invalid</span>. Please double check the settings import string before importing again. <i><<link "Were you trying to import a save instead of a settings preset?">><<overlayReplace "export">><</link>></i>
+	<</if>>
+<</widget>>
+
+<<widget "importDetailsDisplay">>
+	<<set _importedSettings to _args[0]>>
+	<div class="presetConfirm settingsGrid">
+		<div class="settingsHeader">Imported Settings</div>
+
+		<<if $passage is "Start">>
+			<<settingsPreviewGroup "Character" _importedSettings.starting>>
+			<<settingsPreviewGroup "Player" _importedSettings.starting.player>>
+		<</if>>
+
+		<<settingsPreviewGroup "General" _importedSettings.general>>
+		<<settingsPreviewGroup "Settings" _importedSettings.general.settings>>
+		<<settingsPreviewGroup "Options" _importedSettings.general.options>>
+		<<settingsPreviewGroup "Shop Defaults" _importedSettings.general.shopDefaults>>
+		<<settingsPreviewGroup "Wardrobe Defaults" _importedSettings.general.wardrobeDefaults>>
+
+		<<for _beastType, _beastSettings range _importedSettings.general.settings.beastSettings>>
+			<<beastSettingsPreview `settingNameFromVarName(_beastType)` _beastSettings>>
+		<</for>>
+		<<for _namedBeast, _namedBeastSettings range _importedSettings.general.settings.namedBeasts>>
+			<<settingsPreviewGroup `settingNameFromVarName(_namedBeast)` _namedBeastSettings>>
+		<</for>>
+
+		<<for _npcName, _npcSettings range _importedSettings.npc>>
+			<<settingsPreviewGroup _npcName _npcSettings>>
+		<</for>>
+	</div>
+<</widget>>
+
+<<widget "beastSettingsPreview">>
+	<div class="settingsToggleItem">
+		<span class="gold"><<= _args[0]>>:</span>
+		<ul>
+			<<for _key, _value range _args[1]>>
+				<<if typeof _value isnot "object">>
+					<<if (_key is "maleChanceMale" or _key is "maleChanceFemale") and !_args[1].maleChanceSplit>>
+						<<continue>>
+					<</if>>
+					<li><<= settingNameFromVarName(_key)>>: <span class="green"><<= settingValueNameFromValue(_key, _value)>></span></li>
+				<</if>>
+			<</for>>
+		</ul>
+	</div>
+<</widget>>
+
+<<widget "settingsPreviewGroup">>
+	<div class="settingsToggleItem">
+		<span class="gold"><<= _args[0]>>:</span>
+		<ul>
+			<<for _key, _value range _args[1]>>
+				<<if typeof _value isnot "object">>
+					<li><<= settingNameFromVarName(_key)>>: <span class="green"><<= settingValueNameFromValue(_key, _value)>></span></li>
+				<</if>>
+			<</for>>
+		</ul>
+	</div>
+<</widget>>

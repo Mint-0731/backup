@@ -1,0 +1,31 @@
+:: Widgets EffectsOld [widget]
+
+<<widget "effectsarousalsoak">>
+	<<if $lowerwetstage is 3 or $worn.lower.type.includes("naked")>>
+		<!-- If clothing above underwear is also wet, or missing -->
+		<<set $wetintro to 2>>
+		<span class="lewd">Your bodily fluids soak through your $worn.under_lower.name, exposing your <<genitals>>. </span>
+	<<elseif setup.clothes.lower[clothesIndex('lower', $worn.lower)].skirt is 1>>
+		<span class="lewd">Your bodily fluids soak through your $worn.under_lower.name, exposing your <<genitals>> to the air under your $worn.lower.name. </span>
+	<<else>>
+		<span class="lewd">Your bodily fluids soak through your $worn.under_lower.name. </span>
+	<</if>>
+	<<if $wetintro is 0 and $underupperwet lt 100>>
+		<<if !hasSexStat("exhibitionism", 4)>>
+			You hope nobody notices.
+		<<else>>
+			You hope somebody notices.
+		<</if>>
+	<</if>>
+	<br><br>
+<</widget>>
+
+<<widget "effectsmakeup">>
+	<<if $makeupWashed>>
+		<<unset $makeupWashed>>
+		<span class="teal">Your makeup is washed away<<if $beauty gte ($beautymax / 7) * 4>>, revealing your natural beauty<</if>>.</span><br>
+	<</if>>
+	<<if $makeup.mascara and $makeup.mascara_running lt painToTearsLvl($pain) and !$makeup.mascara.includes("waterproof")>>
+		<<set $makeup.mascara_running to painToTearsLvl($pain)>>
+	<</if>>
+<</widget>>
